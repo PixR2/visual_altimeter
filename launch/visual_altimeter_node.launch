@@ -1,0 +1,14 @@
+<launch>
+	<arg name="rgbd_cam" default="xtion" />
+    
+    <include file="$(find openni_launch)/launch/openni.launch">
+        <arg name="camera" value="$(arg rgbd_cam)"/>
+    </include>
+
+	<node pkg="nodelet" type="nodelet" name="convert_openni_viso" args="load depth_image_proc/convert_metric $(arg rgbd_cam)_nodelet_manager">
+		<remap from="image_raw" to="$(arg rgbd_cam)/depth/image_raw"/>
+		<remap from="image" to="$(arg rgbd_cam)/depth/image"/>
+	</node>
+    
+    <node pkg="nodelet" type="nodelet" name="visual_altimeter_nodelet" args="load VA/VisualAltimeterNodelet $(arg rgbd_cam)_nodelet_manager"/>
+</launch>

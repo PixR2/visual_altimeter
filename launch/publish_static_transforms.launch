@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="map_nav_broadcaster" args="0 0 0 0 0 0 map nav 100"/>
+ <node pkg="tf" type="static_transform_publisher" name="mikrokopter_map_broadcaster" args="0 0 0 0 0 0 mikrokopter map 100"/>
+</launch>
