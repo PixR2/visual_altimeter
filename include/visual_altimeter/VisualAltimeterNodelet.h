@@ -10,6 +10,7 @@ namespace visual_altimeter
 	class VisualAltimeterNodelet: public nodelet::Nodelet
 	{
 	public:
+        VisualAltimeterNodelet();
         ~VisualAltimeterNodelet();        
 
 		virtual void onInit();

@@ -177,5 +177,5 @@ include_directories(${Eigen_INCLUDE_DIRS})
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(VisualAltimeterNodelet src/VisualAltimeterNodelet.cpp src/visual_altimeter_node.cpp src/VisualAltimeter.cpp src/BasicVisualAltimeter.cpp src/AdvancedVisualAltimeter.cpp src/BasicVisualPlaneAltimeter.cpp src/DataFusionAltimeter.cpp)
+add_library(VisualAltimeterNodelet src/VisualAltimeterNodelet.cpp src/VisualAltimeter.cpp src/BasicVisualAltimeter.cpp src/AdvancedVisualAltimeter.cpp src/BasicVisualPlaneAltimeter.cpp src/DataFusionAltimeter.cpp)
 target_link_libraries(VisualAltimeterNodelet ${catkin_LIBRARIES} ${PCL_LIBRARIES})

@@ -10,6 +10,11 @@ PLUGINLIB_DECLARE_CLASS(visual_altimeter, VisualAltimeterNodelet, visual_altimet
 
 namespace visual_altimeter
 {
+    VisualAltimeterNodelet::VisualAltimeterNodelet(): altimeter(0)
+    {
+
+    }
+
     VisualAltimeterNodelet::~VisualAltimeterNodelet()
     {
         if(altimeter) delete altimeter;
@@ -17,14 +22,14 @@ namespace visual_altimeter
 
 	void VisualAltimeterNodelet::onInit()
 	{
-		ROS_INFO("Initializing VisualAltimeterNodelet...");
+		NODELET_INFO("Initializing VisualAltimeterNodelet...");
 
 		if(altimeter) delete altimeter;
 		altimeter = new AdvancedVisualAltimeter();
 		
 		try
 		{
-			altimeter->init(getNodeHandle(), getPrivateNodeHandle());
+			altimeter->init(getMTNodeHandle(), getMTPrivateNodeHandle());
 		}
 		catch(std::exception& e)
 		{
@@ -32,7 +37,7 @@ namespace visual_altimeter
 		    return;
 		}
 		
-		ROS_INFO("Initializing VisualAltimeterNodelet done.");
+		NODELET_INFO("Initializing VisualAltimeterNodelet done.");
 	}
 }
 

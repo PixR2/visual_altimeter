@@ -2,7 +2,7 @@
 #define VISUAL_ALTIMETER_NODELET_H
 
 #include <nodelet/nodelet.h>
-//#include <visual_altimeter/VisualAltimeter.h>
+#include <visual_altimeter/VisualAltimeter.h>
 
 namespace visual_altimeter
 {
@@ -15,7 +15,7 @@ namespace visual_altimeter
 		virtual void onInit();
 
 	private:
-		//VisualAltimeter* altimeter;
+		VisualAltimeter* altimeter;
 	};
 }
 
