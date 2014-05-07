@@ -13,6 +13,7 @@ void AdvancedVisualAltimeter::setupResources()
 
 void AdvancedVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg)
 {
+    ROS_INFO("Calculateing height...");
     // Mask all invalid (<= 0.5) pixels.
     cv::Mat mask = depth_image > 0.5f;
 
@@ -38,6 +39,7 @@ void AdvancedVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const 
     height_msg.nr_valid_samples = nr_valid_pixels;
 
     visual_height_pub_.publish(height_msg);
+    ROS_INFO("Calculateing height done.");
 }
 
 void AdvancedVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg, const sensor_msgs::ImuConstPtr& imuMsg)

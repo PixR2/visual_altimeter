@@ -52,15 +52,17 @@ void VisualAltimeter::init(ros::NodeHandle nh, ros::NodeHandle pnh)
     nh_ = nh;
     pnh_ = pnh;
 
-    std::string camera_ns = nh_.resolveName("camera");
+    std::string camera_ns = nh_.resolveName("");
     std::string depth_topic = ros::names::clean(camera_ns + "/depth/image");
     std::string info_topic = ros::names::clean(camera_ns + "/rgb/camera_info");
+
+    ROS_INFO("depth topic: %s\ncamera info topic: %s\n", depth_topic.c_str(), info_topic.c_str());
 
     image_transport::ImageTransport it(nh_);
 
     try
     {
-        imageDepthSub_.subscribe(it, depth_topic, 1, image_transport::TransportHints("compressedDepth"));
+        imageDepthSub_.subscribe(it, depth_topic, 1, image_transport::TransportHints("raw"));
         cameraInfoSub_.subscribe(nh_, info_topic, 10);
     }
     catch(std::exception& e)

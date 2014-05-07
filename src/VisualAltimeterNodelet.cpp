@@ -22,11 +22,10 @@ namespace visual_altimeter
 
 	void VisualAltimeterNodelet::onInit()
 	{
-		NODELET_INFO("Initializing VisualAltimeterNodelet...");
+        ROS_INFO("Initializing VisualAltimeterNodelet...");
 
 		if(altimeter) delete altimeter;
 		altimeter = new AdvancedVisualAltimeter();
-		
 		try
 		{
 			altimeter->init(getMTNodeHandle(), getMTPrivateNodeHandle());
@@ -37,7 +36,7 @@ namespace visual_altimeter
 		    return;
 		}
 		
-		NODELET_INFO("Initializing VisualAltimeterNodelet done.");
+		ROS_INFO("Initializing VisualAltimeterNodelet done.");
 	}
 }
 

@@ -37,7 +37,7 @@ void VisualAltimeter::cameraImuCallback(const sensor_msgs::ImageConstPtr& imageD
     calculateHeight(ptrDepth->image, camInfoMsg, imuMsg);
 }
 
-VisualAltimeter::VisualAltimeter(bool needs_imu_data): needs_imu_data_(needs_imu_data), nh(), pnh("~")
+VisualAltimeter::VisualAltimeter(bool needs_imu_data): needs_imu_data_(needs_imu_data)
 {
 
 }
@@ -52,9 +52,11 @@ void VisualAltimeter::init(ros::NodeHandle nh, ros::NodeHandle pnh)
     nh_ = nh;
     pnh_ = pnh;
 
-    std::string camera_ns = nh_.resolveName("camera");
+    std::string camera_ns = nh_.resolveName("");
     std::string depth_topic = ros::names::clean(camera_ns + "/depth/image");
     std::string info_topic = ros::names::clean(camera_ns + "/rgb/camera_info");
+
+    ROS_INFO("depth topic: %s\ncamera info topic: %s\n", depth_topic.c_str(), info_topic.c_str());
 
     image_transport::ImageTransport it(nh_);
 
