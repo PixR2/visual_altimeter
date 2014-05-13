@@ -4,8 +4,9 @@
 #include <tf/tf.h>
 #include <tf/LinearMath/Matrix3x3.h>
 #include <tf/transform_datatypes.h>
+#include <opencv2/highgui/highgui.hpp>
 
-DataFusionAltimeter::DataFusionAltimeter(): VisualAltimeter(false)
+DataFusionAltimeter::DataFusionAltimeter(): VisualAltimeter(2)
 {
 
 }
@@ -22,6 +23,9 @@ void DataFusionAltimeter::calculateHeight(const cv::Mat& depth_image, const sens
 
 void DataFusionAltimeter::calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg, const sensor_msgs::ImuConstPtr& imuMsg)
 {
+    cv::Point2f c(camInfoMsg->K[2], camInfoMsg->K[5]);
+    cv::Point2f f(camInfoMsg->K[0], camInfoMsg->K[4]);
+
     tf::Quaternion q;
     tf::quaternionMsgToTF (imuMsg->orientation, q);
 
@@ -30,11 +34,16 @@ void DataFusionAltimeter::calculateHeight(const cv::Mat& depth_image, const sens
 
     ROS_INFO("rotated_lot(%f, %f, %f)", rotated_lot.x(), rotated_lot.y(), rotated_lot.z());
 
-    double u = 525.0*rotated_lot.x()/rotated_lot.z() + 319.5;
-    double v = 525.0*rotated_lot.y()/rotated_lot.z() + 239.5;
+    double u = f.x*rotated_lot.x()/rotated_lot.z() + c.x;
+    double v = f.y*rotated_lot.y()/rotated_lot.z() + c.y;
 
     ROS_INFO("uv(%f, %f)", u, v);
-
+    cv::Mat tmp = depth_image.clone();
+    cv::circle(tmp, cv::Point((int)(u), (int)(v)), 12, cv::Scalar(255), 4);
+    cv::circle(tmp, cv::Point((int)(u), (int)(v)), 8, cv::Scalar(0), 4);
+    cv::circle(tmp, cv::Point((int)(u), (int)(v)), 4, cv::Scalar(255), 4);
+    cv::imshow("lot_image", tmp);
+    cv::waitKey(10);
     //double roll, pitch, yaw;
     //tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
     //ROS_INFO("%f, %f, %f", roll, pitch, yaw);

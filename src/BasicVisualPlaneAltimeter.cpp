@@ -9,7 +9,7 @@
 #include <sensor_msgs/PointCloud.h>
 //#include <cmath>
 
-BasicVisualPlaneAltimeter::BasicVisualPlaneAltimeter(): VisualAltimeter(true)
+BasicVisualPlaneAltimeter::BasicVisualPlaneAltimeter(): VisualAltimeter(1)
 {
 
 }

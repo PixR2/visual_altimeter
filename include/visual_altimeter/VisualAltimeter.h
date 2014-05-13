@@ -8,6 +8,7 @@
 
 #include <sensor_msgs/Imu.h>
 
+#include <message_filters/cache.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
@@ -18,11 +19,12 @@
 class VisualAltimeter
 {
 private:
-    bool needs_imu_data_;
+    int subscribtion_mode_;
 
-    image_transport::SubscriberFilter imageDepthSub_;
+    image_transport::SubscriberFilter imageDepthSubFilter_;
     message_filters::Subscriber<sensor_msgs::CameraInfo> cameraInfoSub_;
     message_filters::Subscriber<sensor_msgs::Imu> imuSub_;
+    image_transport::Subscriber imageDepthSub_;
 
     typedef message_filters::sync_policies::ApproximateTime<
             sensor_msgs::Image,
@@ -35,12 +37,16 @@ private:
             sensor_msgs::Imu> CameraImuSyncPolicy;
     message_filters::Synchronizer<CameraImuSyncPolicy> *camera_imu_sync_;
 
+    message_filters::Cache<sensor_msgs::CameraInfo>* cam_info_cache_;
+    message_filters::Cache<sensor_msgs::Imu>* imu_cache_;
 protected:
     ros::NodeHandle nh_;
     ros::NodeHandle pnh_;
 
 private:
-    void cameraCallback(const sensor_msgs::ImageConstPtr& imageDepthMsg,
+    void cameraCallback(const sensor_msgs::ImageConstPtr& imageDepthMsg);
+
+    void cameraInfoCallback(const sensor_msgs::ImageConstPtr& imageDepthMsg,
                         const sensor_msgs::CameraInfoConstPtr& camInfoMsg);
 
     void cameraImuCallback(const sensor_msgs::ImageConstPtr& imageDepthMsg,
@@ -48,7 +54,7 @@ private:
                             const sensor_msgs::ImuConstPtr& imuMsg);
 
 public:
-    VisualAltimeter(bool needs_imu_data);
+    VisualAltimeter(int subscibtion_mode);
     ~VisualAltimeter();
     void init(ros::NodeHandle nh, ros::NodeHandle pnh);
     void run();

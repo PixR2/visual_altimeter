@@ -1,7 +1,7 @@
 #include <visual_altimeter/AdvancedVisualAltimeter.h>
 #include "visual_altimeter/VisualHeightV2.h"
 
-AdvancedVisualAltimeter::AdvancedVisualAltimeter(): VisualAltimeter(false)
+AdvancedVisualAltimeter::AdvancedVisualAltimeter(): VisualAltimeter(0)
 {
 
 }

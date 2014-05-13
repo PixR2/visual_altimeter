@@ -1,6 +1,6 @@
 <launch>
 	<arg name="rgbd_cam" default="xtion" />
-    <arg name="manager" value="$(rgbd_cam)/camera_nodelet_manager" />
+    <arg name="manager" value="$(arg rgbd_cam)/camera_nodelet_manager" />
 
 	<node pkg="nodelet" type="nodelet" name="convert_openni_viso" args="load depth_image_proc/convert_metric $(arg manager)" output="screen">
 		<remap from="image_raw" to="$(arg rgbd_cam)/depth/image_raw"/>

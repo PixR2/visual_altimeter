@@ -1,7 +1,7 @@
 #include <visual_altimeter/BasicVisualAltimeter.h>
 #include "visual_altimeter/VisualHeightV1.h"
 
-BasicVisualAltimeter::BasicVisualAltimeter(const int sample_radius): VisualAltimeter(false), sample_radius_(sample_radius)
+BasicVisualAltimeter::BasicVisualAltimeter(const int sample_radius): VisualAltimeter(0), sample_radius_(sample_radius)
 {
 
 }

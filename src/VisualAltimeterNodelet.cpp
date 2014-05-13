@@ -25,7 +25,7 @@ namespace visual_altimeter
         ROS_INFO("Initializing VisualAltimeterNodelet...");
 
 		if(altimeter) delete altimeter;
-		altimeter = new AdvancedVisualAltimeter();
+        altimeter = new DataFusionAltimeter(); //new AdvancedVisualAltimeter();
 		try
 		{
 			altimeter->init(getMTNodeHandle(), getMTPrivateNodeHandle());
