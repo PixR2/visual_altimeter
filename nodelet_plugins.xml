@@ -5,3 +5,11 @@
         </description>
     </class>
 </library>
+
+<library path="lib/libCameraRotationCalibratorNodelet">
+    <class name="visual_altimeter/CameraRotationCalibratorNodelet" type="visual_altimeter::CameraRotationCalibratorNodelet" base_class_type="nodelet::Nodelet">
+        <description>
+            Nodelet which helps find the rotation of the camera relative to the FlightCtrl.
+        </description>
+    </class>
+</library>

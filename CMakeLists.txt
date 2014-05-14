@@ -179,3 +179,6 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_library(VisualAltimeterNodelet src/VisualAltimeterNodelet.cpp src/VisualAltimeter.cpp src/BasicVisualAltimeter.cpp src/AdvancedVisualAltimeter.cpp src/BasicVisualPlaneAltimeter.cpp src/DataFusionAltimeter.cpp)
 target_link_libraries(VisualAltimeterNodelet ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_library(CameraRotationCalibratorNodelet src/CameraRotationCalibratorNodelet.cpp src/CameraRotationCalibrator.cpp)
+target_link_libraries(CameraRotationCalibratorNodelet ${catkin_LIBRARIES})

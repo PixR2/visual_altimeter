@@ -1,7 +1,15 @@
 <library path="lib/libVisualAltimeterNodelet">
-    <class name="visual_altimeter/VisualAltimeterNodelet" type="VA::VisualAltimeterNodelet" base_class_type="nodelet::Nodelet">
+    <class name="visual_altimeter/VisualAltimeterNodelet" type="visual_altimeter::VisualAltimeterNodelet" base_class_type="nodelet::Nodelet">
         <description>
             Wraps the VisualAltimeterNode into a Nodelet for faster communication with openni.
+        </description>
+    </class>
+</library>
+
+<library path="lib/libCameraRotationCalibratorNodelet">
+    <class name="visual_altimeter/CameraRotationCalibratorNodelet" type="visual_altimeter::CameraRotationCalibratorNodelet" base_class_type="nodelet::Nodelet">
+        <description>
+            Nodelet which helps find the rotation of the camera relative to the FlightCtrl.
         </description>
     </class>
 </library>
