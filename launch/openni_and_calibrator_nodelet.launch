@@ -5,8 +5,6 @@
     <include file="$(find openni_launch)/launch/openni.launch">
         <arg name="camera" value="$(arg rgbd_cam)"/>
     </include>
-
-    <param name="/$(arg rgbd_cam)/driver/rgb_mode" value="4" />   
     
     <node pkg="nodelet" type="nodelet" name="camera_rotation_calibrator_nodelet" args="load visual_altimeter/CameraRotationCalibratorNodelet $(arg manager)" output="screen"/>
 </launch>
