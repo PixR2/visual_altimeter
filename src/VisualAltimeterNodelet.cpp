@@ -4,7 +4,7 @@
 #include <visual_altimeter/BasicVisualAltimeter.h>
 #include <visual_altimeter/AdvancedVisualAltimeter.h>
 #include <visual_altimeter/BasicVisualPlaneAltimeter.h>
-#include <visual_altimeter/DataFusionAltimeter.h>
+#include <visual_altimeter/RotationInvariantAltimeter.h>
 
 PLUGINLIB_DECLARE_CLASS(visual_altimeter, VisualAltimeterNodelet, visual_altimeter::VisualAltimeterNodelet, nodelet::Nodelet)
 
@@ -25,7 +25,7 @@ namespace visual_altimeter
         ROS_INFO("Initializing VisualAltimeterNodelet...");
 
 		if(altimeter) delete altimeter;
-        altimeter = new DataFusionAltimeter(); //new AdvancedVisualAltimeter();
+        altimeter = new RotationInvariantAltimeter(); //new AdvancedVisualAltimeter();
 		try
 		{
 			altimeter->init(getMTNodeHandle(), getMTPrivateNodeHandle());
