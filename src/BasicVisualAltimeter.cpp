@@ -55,10 +55,10 @@ void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sen
 
     float velocity = 0.0f;
 
-    if(use_kalman_filter_ == true)
+    if(use_kalman_filter_ == true && samples_considered > 0)
     {
         cv::Mat prediction = kalman_filter.predict();
-        //ROS_INFO("prediction: %f\n", prediction.at<float>(0);
+        //ROS_INFO("prediction: %f\n", prediction.at<float>(0));
         cv::Mat_<float> measurement(1,1);
         measurement(0) = avg_depth;
         
