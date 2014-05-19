@@ -45,6 +45,9 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
     double u = f.x*rotated_lot.x()/rotated_lot.z() + c.x;
     double v = f.y*rotated_lot.y()/rotated_lot.z() + c.y;
 
+    //TODO: Use Kalmanfilter to filter height and use KF internal state to find rate of height change (i.e. velocity in z-direction.).
+    //TODO: Use KF prediction step to predict and publish likely next height. 
+
     // Publish the height.
     visual_altimeter::VisualHeightV3 height_msg;
     height_msg.height = depth_image.at<float>(v, u);

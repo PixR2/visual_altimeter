@@ -1,5 +1,4 @@
 float32 height
-float32 z_velocity
 float32 deviation
 float32 min
 float32 max

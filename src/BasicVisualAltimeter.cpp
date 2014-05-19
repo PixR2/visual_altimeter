@@ -1,9 +1,22 @@
 #include <visual_altimeter/BasicVisualAltimeter.h>
 #include "visual_altimeter/VisualHeightV1.h"
 
-BasicVisualAltimeter::BasicVisualAltimeter(const int sample_radius): VisualAltimeter(0), sample_radius_(sample_radius)
+BasicVisualAltimeter::BasicVisualAltimeter(const int sample_radius, bool use_kalman_filter): 
+    VisualAltimeter(0), sample_radius_(sample_radius), kalman_filter(3, 1, 0), use_kalman_filter_(use_kalman_filter)
 {
+    if(use_kalman_filter_ == true)
+    {
+        kalman_filter.statePre.at<float>(0) = 0.5f;
+        kalman_filter.statePre.at<float>(1) = 0.0f;
+        kalman_filter.statePre.at<float>(2) = 0.0f;
 
+        kalman_filter.transitionMatrix = *(cv::Mat_<float>(3, 3) << 1,1,0.5, 0,1,1, 0,0,1);
+
+        cv::setIdentity(kalman_filter.measurementMatrix);
+        cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(1e-4));
+        cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(1e-1));
+        cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(.1));
+    }
 }
 
 void BasicVisualAltimeter::setupResources()
@@ -15,15 +28,6 @@ void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sen
 {
     int c_x = depth_image.cols/2;
     int c_y = depth_image.rows/2;
-
-    /*c_x = (c_x - sample_radius) < 0 ?
-            sample_radius : (c_x + sample_radius) >= ptrDepth->image.cols ?
-                ptrDepth->image.cols - sample_radius : c_x;
-
-
-    c_y = (c_y - sample_radius) < 0 ?
-            sample_radius : (c_y + sample_radius) >= ptrDepth->image.rows ?
-                ptrDepth->image.rows - sample_radius : c_y;*/
 
     float c_depth = depth_image.at<float>(c_y, c_x);
 
@@ -49,29 +53,27 @@ void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sen
 
     float variance = sqrt(avg_depth_squared - avg_depth*avg_depth);
 
+    float velocity = 0.0f;
+
+    if(use_kalman_filter_ == true)
+    {
+        cv::Mat prediction = kalman_filter.predict();
+        //ROS_INFO("prediction: %f\n", prediction.at<float>(0);
+        cv::Mat_<float> measurement(1,1);
+        measurement(0) = avg_depth;
+        
+        cv::Mat estimated = kalman_filter.correct(measurement);
+        avg_depth = estimated.at<float>(0);
+
+        velocity = kalman_filter.statePost.at<float>(1);
+    }     
+
     visual_altimeter::VisualHeightV1 height_msg;
     height_msg.height = avg_depth;
+    height_msg.z_velocity = velocity;
     height_msg.nr_valid_samples = (int)samples_considered;
     height_msg.variance = variance;
     visual_height_pub_.publish(height_msg);
-
-    //ROS_INFO("Depth: depth(%i, %i) = %f - %f (%f)", c_x, c_y, c_depth, avg_depth, samples_considered);
-
-    /*double min;
-    double max;
-    cv::minMaxIdx(ptrDepth->image, &min, &max);
-
-    ROS_INFO("[%f, %f]", min, max);
-
-    cv::Mat adjMap;
-    ptrDepth->image.convertTo(adjMap,CV_8UC1, 255 / (max-min), -min);
-
-    cv::Mat falseColorsMap;
-    cv::applyColorMap(adjMap, falseColorsMap, cv::COLORMAP_BONE);
-
-    cv::imshow("Depth", falseColorsMap);
-
-    cv::waitKey(1);*/
 }
 
 void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg, const sensor_msgs::ImuConstPtr& imuMsg)

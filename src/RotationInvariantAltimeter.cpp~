@@ -35,15 +35,20 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
     tf::Quaternion cal;
     cal.setRotation(tf::Vector3(0, 0, 1), (3.0*M_PI)/4.0);
 
-    // Rotate lot to
+    // Rotate lot to compensate for rotation of UAV. (Find the actual lot)
     tf::Vector3 lot(0, 0, 1);
     tf::Vector3 rotated_lot = tf::quatRotate(cal, tf::quatRotate(q, lot));
 
     ROS_INFO("rotated_lot(%f, %f, %f)", rotated_lot.x(), rotated_lot.y(), rotated_lot.z());
 
+    // Project the found, real, lot onto the camera plane to find the pixel which lies on the line from the camera hole through the lot.
     double u = f.x*rotated_lot.x()/rotated_lot.z() + c.x;
     double v = f.y*rotated_lot.y()/rotated_lot.z() + c.y;
 
+    //TODO: Use Kalmanfilter to filter height and use KF internal state to find rate of height change (i.e. velocity in z-direction.).
+    //TODO: Use KF prediction step to predict and publish likely next height. 
+
+    // Publish the height.
     visual_altimeter::VisualHeightV3 height_msg;
     height_msg.height = depth_image.at<float>(v, u);
     visual_height_pub_.publish(height_msg);

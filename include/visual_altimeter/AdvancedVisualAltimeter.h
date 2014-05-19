@@ -2,6 +2,7 @@
 #define ADVANCED_VISUAL_ALTIMETER_H
 
 #include <visual_altimeter/VisualAltimeter.h>
+#include <opencv2/video/tracking.hpp>
 
 class AdvancedVisualAltimeter: public VisualAltimeter
 {

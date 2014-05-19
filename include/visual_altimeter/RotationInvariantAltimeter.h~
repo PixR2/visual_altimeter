@@ -1,5 +1,5 @@
-#ifndef DATA_FUSION_ALTIMETER_H
-#define DATA_FUSION_ALTIMETER_H
+#ifndef ROTATION_INVARIANT_ALTIMETER_H
+#define ROTATION_INVARIANT_ALTIMETER_H
 
 #include <visual_altimeter/VisualAltimeter.h>
 
