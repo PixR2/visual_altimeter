@@ -6,9 +6,22 @@
 #include <tf/transform_datatypes.h>
 #include <opencv2/highgui/highgui.hpp>
 
-RotationInvariantAltimeter::RotationInvariantAltimeter(): VisualAltimeter(2)
+RotationInvariantAltimeter::RotationInvariantAltimeter(bool use_kalman_filter): 
+    VisualAltimeter(2), use_kalman_filter_(use_kalman_filter)
 {
+    if(use_kalman_filter_ == true)
+    {
+        kalman_filter.statePre.at<float>(0) = 0.5f;
+        kalman_filter.statePre.at<float>(1) = 0.0f;
+        kalman_filter.statePre.at<float>(2) = 0.0f;
 
+        kalman_filter.transitionMatrix = *(cv::Mat_<float>(3, 3) << 1,1,0.5, 0,1,1, 0,0,1);
+        kalman_filter.measurementMatrix = *(cv::Mat_<float>(1, 3) << 1,1,0.5);
+
+        cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(1e-4));
+        cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(1e-1));
+        cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(.1));
+    }
 }
 
 void RotationInvariantAltimeter::setupResources()
@@ -45,12 +58,31 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
     double u = f.x*rotated_lot.x()/rotated_lot.z() + c.x;
     double v = f.y*rotated_lot.y()/rotated_lot.z() + c.y;
 
-    //TODO: Use Kalmanfilter to filter height and use KF internal state to find rate of height change (i.e. velocity in z-direction.).
-    //TODO: Use KF prediction step to predict and publish likely next height. 
+
+    // Filter the calculated value using kalmanfilter if enabled.
+    float height = depth_image.at<float>(v, u);
+    float velocity = 0.0f;    
+
+    if(use_kalman_filter_ == true)
+    {
+        cv::Mat prediction = kalman_filter.predict();
+        //ROS_INFO("prediction: %f\n", prediction.at<float>(0));
+        cv::Mat_<float> measurement(1,1);
+        measurement(0) = height;
+        
+        cv::Mat estimated = kalman_filter.correct(measurement);
+        float estimated_depth = estimated.at<float>(0);
+        printf("%f; %f\n", height, estimated_depth);
+        height = estimated_depth;
+
+        velocity = kalman_filter.statePost.at<float>(1);
+    }
+
 
     // Publish the height.
     visual_altimeter::VisualHeightV3 height_msg;
-    height_msg.height = depth_image.at<float>(v, u);
+    height_msg.height = height;
+    height_msg.z_velocity = velocity;
     visual_height_pub_.publish(height_msg);
 
     /*ROS_INFO("uv(%f, %f)", u, v);

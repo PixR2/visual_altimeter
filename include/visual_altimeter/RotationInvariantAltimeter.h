@@ -7,7 +7,7 @@
 class RotationInvariantAltimeter: public VisualAltimeter
 {
 public:
-    RotationInvariantAltimeter();
+    RotationInvariantAltimeter(bool use_kalman_filter = true);
 
     void setupResources();
     void calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg);
@@ -15,6 +15,9 @@ public:
 
 private:
     ros::Publisher visual_height_pub_;
+
+    cv::KalmanFilter kalman_filter;
+    bool use_kalman_filter_;
 };
 
 #endif

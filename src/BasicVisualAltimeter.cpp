@@ -11,8 +11,8 @@ BasicVisualAltimeter::BasicVisualAltimeter(const int sample_radius, bool use_kal
         kalman_filter.statePre.at<float>(2) = 0.0f;
 
         kalman_filter.transitionMatrix = *(cv::Mat_<float>(3, 3) << 1,1,0.5, 0,1,1, 0,0,1);
+        kalman_filter.measurementMatrix = *(cv::Mat_<float>(1, 3) << 1,1,0.5);
 
-        cv::setIdentity(kalman_filter.measurementMatrix);
         cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(1e-4));
         cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(1e-1));
         cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(.1));
@@ -53,6 +53,7 @@ void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sen
 
     float variance = sqrt(avg_depth_squared - avg_depth*avg_depth);
 
+    // Filter the calculated value using kalmanfilter if enabled and if a hight was calculated.
     float velocity = 0.0f;
 
     if(use_kalman_filter_ == true && samples_considered > 0)
@@ -63,7 +64,9 @@ void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sen
         measurement(0) = avg_depth;
         
         cv::Mat estimated = kalman_filter.correct(measurement);
-        avg_depth = estimated.at<float>(0);
+        float estimated_depth = estimated.at<float>(0);
+        printf("%f; %f\n", avg_depth, estimated_depth);
+        avg_depth = estimated_depth;
 
         velocity = kalman_filter.statePost.at<float>(1);
     }     

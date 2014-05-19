@@ -7,7 +7,7 @@
 class AdvancedVisualAltimeter: public VisualAltimeter
 {
 public:
-    AdvancedVisualAltimeter();
+    AdvancedVisualAltimeter(bool use_kalman_filter = true);
 
     void setupResources();
 
@@ -16,6 +16,9 @@ public:
 
 private:
     ros::Publisher visual_height_pub_;
+
+    cv::KalmanFilter kalman_filter;
+    bool use_kalman_filter_;
 };
 
 #endif
