@@ -85,19 +85,15 @@ void VisualAltimeter::init(ros::NodeHandle nh, ros::NodeHandle pnh)
 
     image_transport::ImageTransport it(nh_);
 
-    // TODO: Only sub to imageDebthSubFilter_ if needed.
-    if(subscribtion_mode_ == 0 || subscribtion_mode_ == 1)
-    {
-        try
-        {
-            imageDepthSubFilter_.subscribe(it, depth_topic, 1, image_transport::TransportHints("raw"));
-            cameraInfoSub_.subscribe(nh_, info_topic, 10);
+	try
+	{
+	    imageDepthSubFilter_.subscribe(it, depth_topic, 1, image_transport::TransportHints("raw"));
+	    cameraInfoSub_.subscribe(nh_, info_topic, 10);
+	}
+	catch(std::exception& e)
+	{
+	    throw e;
         }
-        catch(std::exception& e)
-        {
-            throw e;
-        }
-    }
 
     if(subscribtion_mode_ == 0)
     {

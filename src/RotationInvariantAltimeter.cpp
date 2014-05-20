@@ -37,8 +37,10 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
 void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg, const sensor_msgs::ImuConstPtr& imuMsg)
 {
     // Extract center point and focal length.
-    cv::Point2f c(camInfoMsg->K[2], camInfoMsg->K[5]);
-    cv::Point2f f(camInfoMsg->K[0], camInfoMsg->K[4]);
+    //cv::Point2f c(camInfoMsg->K[2], camInfoMsg->K[5]);
+    //cv::Point2f f(camInfoMsg->K[0], camInfoMsg->K[4]);
+    cv::Point2f c(160.0f, 120.0f);
+    cv::Point2f f(525.0f, 525.0f);
 
     // Convert from message to tf::Quaternion.
     tf::Quaternion q;
@@ -72,13 +74,13 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
         
         cv::Mat estimated = kalman_filter.correct(measurement);
         float estimated_depth = estimated.at<float>(0);
-        printf("%f; %f\n", height, estimated_depth);
+        printf("%f, %f\n", height, estimated_depth);
         height = estimated_depth;
 
         velocity = kalman_filter.statePost.at<float>(1);
     }
 
-
+	ROS_INFO("%f", height);
     // Publish the height.
     visual_altimeter::VisualHeightV3 height_msg;
     height_msg.height = height;
