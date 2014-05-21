@@ -2,7 +2,7 @@
 #include "visual_altimeter/VisualHeightV2.h"
 
 AdvancedVisualAltimeter::AdvancedVisualAltimeter(bool use_kalman_filter): 
-    VisualAltimeter(0), use_kalman_filter_(use_kalman_filter)
+    VisualAltimeter(0), use_kalman_filter_(use_kalman_filter), kalman_filter(3, 1, 0)
 {
     if(use_kalman_filter_ == true)
     {
@@ -56,7 +56,7 @@ void AdvancedVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const 
         
         cv::Mat estimated = kalman_filter.correct(measurement);
         float estimated_depth = estimated.at<float>(0);
-        printf("%f; %f\n", height, estimated_depth);
+        printf("%f, %f\n", height, estimated_depth);
         height = estimated_depth;
 
         velocity = kalman_filter.statePost.at<float>(1);

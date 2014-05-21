@@ -6,6 +6,7 @@
         <arg name="camera" value="$(arg rgbd_cam)"/>
     </include>
 
+    <param name="/$(arg rgbd_cam)/driver/image_mode" value="4"/>
     <param name="/$(arg rgbd_cam)/driver/depth_mode" value="4" />   
 
 	<node pkg="nodelet" type="nodelet" name="convert_openni_viso" args="load depth_image_proc/convert_metric $(arg manager)" output="screen">

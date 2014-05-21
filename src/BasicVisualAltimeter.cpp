@@ -65,7 +65,7 @@ void BasicVisualAltimeter::calculateHeight(const cv::Mat& depth_image, const sen
         
         cv::Mat estimated = kalman_filter.correct(measurement);
         float estimated_depth = estimated.at<float>(0);
-        printf("%f; %f\n", avg_depth, estimated_depth);
+        printf("%f, %f\n", avg_depth, estimated_depth);
         avg_depth = estimated_depth;
 
         velocity = kalman_filter.statePost.at<float>(1);

@@ -1,0 +1,5 @@
+<launch>
+	<include file="$(find visual_altimeter)/launch/openni_and_altimeter_nodelet.launch"/>
+	<node pkg="rosbag" type="record" name="recorder" args="/xtion/depth/image /xtion/rgb/camera_info /mikrokopter/imu"/>
+
+</launch>

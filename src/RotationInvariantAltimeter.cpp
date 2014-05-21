@@ -7,7 +7,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 RotationInvariantAltimeter::RotationInvariantAltimeter(bool use_kalman_filter): 
-    VisualAltimeter(2), use_kalman_filter_(use_kalman_filter)
+    VisualAltimeter(2), kalman_filter(3, 1, 0), use_kalman_filter_(use_kalman_filter)
 {
     if(use_kalman_filter_ == true)
     {
@@ -37,10 +37,10 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
 void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, const sensor_msgs::CameraInfoConstPtr& camInfoMsg, const sensor_msgs::ImuConstPtr& imuMsg)
 {
     // Extract center point and focal length.
-    //cv::Point2f c(camInfoMsg->K[2], camInfoMsg->K[5]);
-    //cv::Point2f f(camInfoMsg->K[0], camInfoMsg->K[4]);
-    cv::Point2f c(160.0f, 120.0f);
-    cv::Point2f f(525.0f, 525.0f);
+    cv::Point2f c(camInfoMsg->K[2], camInfoMsg->K[5]);
+    cv::Point2f f(camInfoMsg->K[0], camInfoMsg->K[4]);
+    //cv::Point2f c(160.0f, 120.0f);
+    //cv::Point2f f(525.0f, 525.0f);
 
     // Convert from message to tf::Quaternion.
     tf::Quaternion q;
@@ -54,12 +54,13 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
     tf::Vector3 lot(0, 0, 1);
     tf::Vector3 rotated_lot = tf::quatRotate(cal, tf::quatRotate(q, lot));
 
-    ROS_INFO("rotated_lot(%f, %f, %f)", rotated_lot.x(), rotated_lot.y(), rotated_lot.z());
+    //ROS_INFO("rotated_lot(%f, %f, %f)", rotated_lot.x(), rotated_lot.y(), rotated_lot.z());
 
     // Project the found, real, lot onto the camera plane to find the pixel which lies on the line from the camera hole through the lot.
     double u = f.x*rotated_lot.x()/rotated_lot.z() + c.x;
     double v = f.y*rotated_lot.y()/rotated_lot.z() + c.y;
 
+	//ROS_INFO("uv(%f, %f)", u, v);
 
     // Filter the calculated value using kalmanfilter if enabled.
     float height = depth_image.at<float>(v, u);
@@ -80,7 +81,7 @@ void RotationInvariantAltimeter::calculateHeight(const cv::Mat& depth_image, con
         velocity = kalman_filter.statePost.at<float>(1);
     }
 
-	ROS_INFO("%f", height);
+	//ROS_INFO("%f", height);
     // Publish the height.
     visual_altimeter::VisualHeightV3 height_msg;
     height_msg.height = height;
